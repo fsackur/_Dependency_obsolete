@@ -6,6 +6,20 @@
     # Constructor; just chains base ctor
     ComparableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
 
+    ComparableModuleSpecification ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (
+        $(
+            $Hashtable = @{
+                ModuleName        = $ModuleSpec.Name
+                Guid              = $ModuleSpec.Guid
+                ModuleVersion     = $ModuleSpec.Version
+                RequiredVersion   = $ModuleSpec.RequiredVersion
+            }
+            if ($ModuleSpec.MaximumVersion) {$Hashtable.MaximumVersion = $ModuleSpec.MaximumVersion}
+
+            $Hashtable
+        )
+    ) {}
+
 
     # Override method from Object
     [string] ToString() {return $this.Name, $this.Version -join ' '}
