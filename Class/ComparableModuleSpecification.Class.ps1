@@ -1,4 +1,4 @@
-﻿class ComparableModuleSpecification : Microsoft.PowerShell.Commands.ModuleSpecification, IComparable
+﻿class ComparableModuleSpecification : Microsoft.PowerShell.Commands.ModuleSpecification, IComparable, IEquatable[Microsoft.PowerShell.Commands.ModuleSpecification]
 {
     [ComparableModuleSpecification[]] $Parent
     [ComparableModuleSpecification[]] $Children
@@ -9,7 +9,22 @@
     # Override methods from Object
     [string] ToString() {return $this.Name, $this.Version -join ' '}
     [int] GetHashCode() {return $this.ToString().GetHashCode()}
-    [bool] Equals()     {return $this.Name -eq $args[0].Name}
+    [bool] Equals([System.Object] $Obj)
+    {
+        $ComparisonObj = $Obj -as [Microsoft.PowerShell.Commands.ModuleSpecification]
+        if ($null -eq $ComparisonObj)
+        {
+            return $false
+        }
+        else
+        {
+            return $this.Equals($ComparisonObj)
+        }
+    }
+    [bool] Equals([Microsoft.PowerShell.Commands.ModuleSpecification] $ComparisonObj)
+    {
+        return $this.Name -ilike $ComparisonObj.Name
+    }
 
     # Implement IComparable. This allows comparison operators to work as expected.
     [int] CompareTo ([Object]$obj)
