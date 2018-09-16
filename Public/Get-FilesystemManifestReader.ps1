@@ -108,27 +108,32 @@
 
             $ModuleName = $ModuleSpec.Name
 
-            foreach ($ModuleRoot in $ModulePath)
+            foreach ($ModuleRoot in $ModulePath)    # ModulePath is bound from parent scope by GetNewClosure()
             {
                 $ModuleBase = Join-Path $ModuleRoot $ModuleName
+                if (-not (Test-Path $ModuleBase -PathType Container))
+                {
+                    continue
+                }
 
-                if (-not (Test-Path $ModuleBase -PathType Container)) {continue}
-
+                # Does the module folder have version-number folders inside?
                 $ContainedVersions = Get-ChildItem $ModuleBase -Directory |
-                    Where-Object {$_.Name -match '(\d+\.){2,3}\d+'} |
+                    Where-Object   {$_.Name -match '(\d+\.){2,3}\d+'} |
                     ForEach-Object {[version]$_.Name} |
-                    Where-Object {$_ | Test-VersionMeetsModuleSpec $ModuleSpec}
+                    Where-Object   {$_ | Test-VersionMeetsModuleSpec $ModuleSpec}
 
+                # Pick version number according to preference
                 $SortSplat = @{}
                 if ($VersionMatchingPreference -eq 'Highest')
                 {
                     $SortSplat['Descending'] = $true
                 }
-                $ContainedVersion = $ContainedVersions | Sort-Object @SortSplat | Select-Object -First 1
+                $ContainedVersion = $ContainedVersions |
+                    Sort-Object @SortSplat |
+                    Select-Object -First 1
 
-                $ModuleBase = Join-Path $ModuleBase $ContainedVersion  # Has no effect if ChildPath argument is null
-
-                $Psd1Path = Join-Path $ModuleBase "$ModuleName.psd1"
+                $ModuleBase = Join-Path $ModuleBase $ContainedVersion  # Has no effect if ChildPath argument is null, so will fall back to the original ModuleBase
+                $Psd1Path   = Join-Path $ModuleBase "$ModuleName.psd1"
 
                 if (Test-Path $Psd1Path -PathType Leaf)
                 {
@@ -141,7 +146,7 @@
             }
 
             throw New-Object System.Management.Automation.ItemNotFoundException (
-                "Could not find module meeting spec '$ModuleSpec' in path list '$($ModulePath -join ';')'."
+                "Could not find any module meeting specification '$ModuleSpec' in path list '$($ModulePath -join ';')'."
             )
 
         }.GetNewClosure()   # GetNewClosure binds any variables in the scriptblock to the values they have in the enclosing scope.
