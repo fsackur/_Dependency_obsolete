@@ -1,10 +1,17 @@
 ﻿class ComparableModuleSpecification : Microsoft.PowerShell.Commands.ModuleSpecification, IComparable
 {
-    ComparableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable)
-    {
+    [ComparableModuleSpecification[]] $Parent
+    [ComparableModuleSpecification[]] $Children
 
-    }
+    # Constructor; just chains base ctor
+    ComparableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
 
+    # Override methods from Object
+    [string] ToString() {return $this.Name, $this.Version -join ' '}
+    [int] GetHashCode() {return $this.ToString().GetHashCode()}
+    [bool] Equals()     {return $this.Name -eq $args[0].Name}
+
+    # Implement IComparable. This allows comparison operators to work as expected.
     [int] CompareTo ([Object]$obj)
     {
         if ($Obj -isnot $this.GetType())
@@ -25,5 +32,31 @@
         {
             return $this.Version.CompareTo($Obj.Version)
         }
+    }
+
+    # List of all dependencies; reverse this to get a viable module import order
+    [System.Collections.Generic.List[Microsoft.PowerShell.Commands.ModuleSpecification]] GetList()
+    {
+        $List = [System.Collections.Generic.List[Microsoft.PowerShell.Commands.ModuleSpecification]]::new()
+        $this.Children | ForEach-Object {
+            $ChildList = $_.GetList()
+            if ($ChildList) {$List.AddRange([System.Collections.Generic.List[Microsoft.PowerShell.Commands.ModuleSpecification]]$ChildList)}
+        }
+        $List.Add($this)
+
+        [System.Collections.Generic.List[Microsoft.PowerShell.Commands.ModuleSpecification]]$L2 = $List | Get-Unique
+        return $L2
+    }
+
+    # Visual output with dependencies indented
+    [string] PrintTree([string]$Indentation = "")
+    {
+        $SB = New-Object System.Text.StringBuilder (200)
+        $null = $SB.Append($Indentation).AppendLine($this.ToString())  # Output self
+        foreach ($Child in $this.Children)
+        {
+            $null = $SB.AppendLine($Child.PrintTree(($Indentation + "    ")))  # Output children, one by one, with increased indentation
+        }
+        return $SB.ToString()
     }
 }
