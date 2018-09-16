@@ -1,9 +1,9 @@
-﻿class EquatableModuleSpecification : Microsoft.PowerShell.Commands.ModuleSpecification, IEquatable[Microsoft.PowerShell.Commands.ModuleSpecification]
+﻿class EquatableModuleSpecification : Microsoft.PowerShell.Commands.ModuleSpecification, IEquatable[EquatableModuleSpecification]
 {
     # Constructors
     EquatableModuleSpecification ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
     EquatableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
-    EquatableModuleSpecification ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (  #have to chain base ctor because properties are read-only
+    EquatableModuleSpecification ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (  # have to chain base ctor because properties are read-only
         $(
             $Hashtable = @{
                 ModuleName        = $ModuleSpec.Name
@@ -28,13 +28,13 @@
         return $this.Name, $this.GetVersion() -join ' '
     }
 
-    # Important for equality testing
+    # Override method from Object - important for equality testing
     [int] GetHashCode() {return $this.ToString().ToLower().GetHashCode()}
 
     # Override method from Object by testing for null and calling implementation of IEquatable
     [bool] Equals([System.Object]$Obj)
     {
-        $ComparisonObj = $Obj -as [Microsoft.PowerShell.Commands.ModuleSpecification]
+        $ComparisonObj = $Obj -as [EquatableModuleSpecification]
         if ($null -eq $ComparisonObj)
         {
             return $false
@@ -46,7 +46,7 @@
     }
 
     # Implement IEquatable
-    [bool] Equals([Microsoft.PowerShell.Commands.ModuleSpecification]$ComparisonObj)
+    [bool] Equals([EquatableModuleSpecification]$ComparisonObj)     # Base type does not have useful ToString()
     {
         return $this.ToString() -ilike $ComparisonObj.ToString()
     }
