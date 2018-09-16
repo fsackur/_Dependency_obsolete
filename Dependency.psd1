@@ -1,4 +1,4 @@
-@{
+﻿@{
     Description       = 'Build a tree of PS module dependencies.'
     ModuleToProcess   = 'Dependency.psm1'
     ModuleVersion     = '0.0.0.1'

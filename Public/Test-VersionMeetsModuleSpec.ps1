@@ -1,4 +1,4 @@
-function Test-VersionMeetsModuleSpec
+﻿function Test-VersionMeetsModuleSpec
 {
     <#
         .SYNOPSIS
