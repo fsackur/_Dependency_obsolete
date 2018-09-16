@@ -6,7 +6,9 @@
         <View>
             <Name>ModuleSpecification</Name>
             <ViewSelectedBy>
+                <TypeName>EquatableModuleSpecification</TypeName>
                 <TypeName>ComparableModuleSpecification</TypeName>
+                <TypeName>ModuleDependency</TypeName>
             </ViewSelectedBy>
             <TableControl>
 
@@ -26,7 +28,7 @@
                                 <PropertyName>Name</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>Version</PropertyName>
+                                <ScriptBlock>$_.GetVersion()</ScriptBlock>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
