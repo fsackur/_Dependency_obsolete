@@ -71,18 +71,30 @@
     }
 
     # List of all dependencies; reverse this to get a viable module import order
-    [System.Collections.Generic.List[ComparableModuleSpecification]] GetList()
+    [System.Collections.Generic.List[ComparableModuleSpecification]] ToList()
     {
-        $List = [System.Collections.Generic.List[Microsoft.PowerShell.Commands.ModuleSpecification]]::new()
-        foreach ($Child in $this.Children)
-        {
-            $ChildList = $_.GetList()
-            if ($ChildList) {$List.AddRange([System.Collections.Generic.List[Microsoft.PowerShell.Commands.ModuleSpecification]]$ChildList)}
-        }
+        $List = [System.Collections.Generic.List[ComparableModuleSpecification]]::new()
         $List.Add($this)
 
-        [System.Collections.Generic.List[ComparableModuleSpecification]]$L2 = $List | Get-Unique
-        return $L2
+        foreach ($Child in $this.Children)
+        {
+            $ChildList = $Child.ToList()
+            if ($ChildList) {$List.AddRange([System.Collections.Generic.List[ComparableModuleSpecification]]$ChildList)}
+        }
+
+        return $List
+    }
+
+    # List with duplicates removed
+    [System.Collections.Generic.List[ComparableModuleSpecification]] GetDistinctList()
+    {
+        return [System.Collections.Generic.List[ComparableModuleSpecification]]($this.ToList() | Select-Object -Unique)
+    }
+
+    # List with duplicates removed and in reverse order
+    [System.Collections.Generic.List[ComparableModuleSpecification]] GetModuleImportOrder()
+    {
+        return $this.GetDistinctList().Reverse()
     }
 
     # Visual output with dependencies indented
