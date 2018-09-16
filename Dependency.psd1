@@ -10,7 +10,9 @@
     PowerShellVersion = '5.0'
 
     ScriptsToProcess  = @(
-        'Class\ComparableModuleSpecification.Class.ps1'
+        'Class\EquatableModuleSpecification.Class.ps1',
+        'Class\ComparableModuleSpecification.Class.ps1',
+        'Class\ModuleDependency.Class.ps1'
     )
     RequiredModules   = @()
     FunctionsToExport = @(
