@@ -74,7 +74,7 @@ function Get-Dependency
     param
     (
         [Parameter(Mandatory, Position = 0, ValueFromPipeline)]
-        [ModuleDependency]$DependingModule,
+        [Microsoft.PowerShell.Commands.ModuleSpecification]$DependingModule,
 
         [Parameter(Mandatory = $false, Position = 1)]
         [scriptblock]$ManifestReader = (Get-FilesystemManifestReader)
@@ -85,7 +85,7 @@ function Get-Dependency
         $DependingManifest = & $ManifestReader $DependingModule
         $DependingModule   = [ModuleDependency]@{                   # Reimport to set the version discovered by the reader
             ModuleName    = $DependingModule.Name
-            ModuleVersion = $DependingManifest.Version
+            ModuleVersion = $DependingManifest.ModuleVersion
         }
 
         [ModuleDependency[]]$Required = $DependingManifest.RequiredModules
