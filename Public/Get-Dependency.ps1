@@ -83,6 +83,11 @@ function Get-Dependency
     process
     {
         $DependingManifest = & $ManifestReader $DependingModule
+        $DependingModule   = [ModuleDependency]@{                   # Reimport to set the version discovered by the reader
+            ModuleName    = $DependingModule.Name
+            ModuleVersion = $DependingManifest.Version
+        }
+
         [ModuleDependency[]]$Required = $DependingManifest.RequiredModules
 
         if ($Required)
