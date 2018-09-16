@@ -11,6 +11,10 @@
         .PARAMETER ModulePath
         A semi-colon-separated list of paths, or array of paths, containing PS modules to be searched.
 
+        .PARAMETER VersionMatchingPreference
+        When more than one module version is found that falls within the version range allowed by the module
+        specification, specify whether to prefer the highest matching version or the lowest matching version.
+
         .OUTPUTS
         [scriptblock]
 
@@ -43,7 +47,11 @@
     param
     (
         [Parameter(Position = 0, ValueFromPipeline)]
-        [string[]]$ModulePath = $env:PSModulePath
+        [string[]]$ModulePath = $env:PSModulePath,
+
+        [Parameter()]
+        [ValidateSet('Highest', 'Lowest')]
+        [string]$VersionMatchingPreference = 'Lowest'
     )
 
     end
@@ -112,7 +120,7 @@
                     Where-Object {$_ | Test-VersionMeetsModuleSpec $ModuleSpec}
 
                 $SortSplat = @{}
-                if ($GreedyVersionMatching)
+                if ($VersionMatchingPreference -eq 'Highest')
                 {
                     $SortSplat['Descending'] = $true
                 }
@@ -136,7 +144,9 @@
                 "Could not find module meeting spec '$ModuleSpec' in path list '$($ModulePath -join ';')'."
             )
 
-        }.GetNewClosure()   # GetNewClosure binds any variables in the scriptblock to the values they have in the enclosing scope. This is how we fix the value of $ModulePath within the scriptblock to whatever was passed to the outer function.
+        }.GetNewClosure()   # GetNewClosure binds any variables in the scriptblock to the values they have in the enclosing scope.
+        # This is how we fix the values of $ModulePath and $VersionMatchingPreference within the scriptblock to whatever their
+        # values were in the outer function.
 
 
         return $FilesystemReader
