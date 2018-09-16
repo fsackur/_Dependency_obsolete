@@ -18,9 +18,15 @@
         )
     ) {}
 
+    [version] GetVersion()
+    {
+        if ($this.RequiredVersion) {return [version]$this.RequiredVersion} else {return [version]$this.Version}
+    }
 
     # Override method from Object
-    [string] ToString() {return $this.Name, $this.Version -join ' '}
+    [string] ToString() {
+        return $this.Name, $this.GetVersion() -join ' '
+    }
 
     # Important for equality testing
     [int] GetHashCode() {return $this.ToString().ToLower().GetHashCode()}
