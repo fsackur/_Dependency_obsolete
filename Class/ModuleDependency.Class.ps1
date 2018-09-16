@@ -1,5 +1,21 @@
 ﻿class ModuleDependency : ComparableModuleSpecification
 {
+    <#
+        .SYNOPSIS
+        This class gives us module specification objects that can be nodes in a tree structure.
+
+        .DESCRIPTION
+        This class provides:
+
+        - ToList()               : Outputs a list of dependency modules, including duplicates
+        - GetDistinctList()      : Outputs a list of dependency modules, with duplicates removed
+        - GetModuleImportOrder() : Outputs a list of dependency modules, in reverse order
+        - PrintTree()            : Outputs a string with the tree structure shown by indentation
+
+        .NOTES
+        This module provides the Get-Dependency function to build the tree.
+    #>
+
     [ModuleDependency]$Parent
     [ModuleDependency[]]$Children
 

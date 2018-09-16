@@ -1,5 +1,23 @@
 ﻿class ComparableModuleSpecification : EquatableModuleSpecification, IComparable
 {
+    <#
+        .SYNOPSIS
+        This class gives us module specification objects that can be sorted. Sorting is on Name, then Version.
+
+        .EXAMPLE
+        $Module1 = [ComparableModuleSpecification]@{ModuleName = 'DBATools'; ModuleVersion = '0.8.6'}
+        $Module2 = [ComparableModuleSpecification]@{ModuleName = 'DBATools'; ModuleVersion = '0.8.6'}
+        $Module3 = [ComparableModuleSpecification]@{ModuleName = 'DBATools'; ModuleVersion = '0.9.3'}
+        $Module4 = [ComparableModuleSpecification]@{ModuleName = 'PoshRSJob'; ModuleVersion = '0.9.3'}
+        $Module1, $Module2, $Module3, $Module4 | Sort-Object -Descending -Unique
+
+        Name      Version
+        ----      -------
+        PoshRSJob 0.9.3
+        DBATools  0.9.3
+        DBATools  0.8.6
+    #>
+
     # Constructors
     ComparableModuleSpecification ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
     ComparableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}

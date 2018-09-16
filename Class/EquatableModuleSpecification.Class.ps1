@@ -1,5 +1,31 @@
 ﻿class EquatableModuleSpecification : Microsoft.PowerShell.Commands.ModuleSpecification, IEquatable[EquatableModuleSpecification]
 {
+    <#
+        .SYNOPSIS
+        This class gives us module specification objects that can be tested for equality.
+
+        .EXAMPLE
+        $Module1 = [EquatableModuleSpecification]@{ModuleName = 'DBATools'; ModuleVersion = '0.8.6'}
+        $Module2 = [EquatableModuleSpecification]@{ModuleName = 'DBATools'; ModuleVersion = '0.8.6'}
+        $Module1 -eq $Module2
+
+        True
+
+        .EXAMPLE
+        $Module2 = [EquatableModuleSpecification]@{ModuleName = 'DBATools'; ModuleVersion = '0.8.6'}
+        $Module3 = [EquatableModuleSpecification]@{ModuleName = 'DBATools'; ModuleVersion = '0.9.3'}
+        $Module2 -eq $Module3
+
+        False
+
+        .EXAMPLE
+        $Module3 = [EquatableModuleSpecification]@{ModuleName = 'DBATools'; ModuleVersion = '0.9.3'}
+        $Module4 = [EquatableModuleSpecification]@{ModuleName = 'PoshRSJob'; ModuleVersion = '0.9.3'}
+        $Module3 -eq $Module4
+
+        False
+    #>
+
     # Constructors
     EquatableModuleSpecification ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
     EquatableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
