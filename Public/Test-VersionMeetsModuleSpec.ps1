@@ -54,7 +54,6 @@
             return $false
         }
 
-
         if ($ModuleSpec.MaximumVersion -and $Version -gt [version]$ModuleSpec.MaximumVersion)
         {
             return $false
