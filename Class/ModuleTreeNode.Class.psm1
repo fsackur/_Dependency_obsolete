@@ -1,7 +1,7 @@
 ﻿using module .\EquatableModuleSpecification.Class.psm1
 using module .\ComparableModuleSpecification.Class.psm1
 
-class ModuleDependency : ComparableModuleSpecification
+class ModuleTreeNode : ComparableModuleSpecification
 {
     <#
         .SYNOPSIS
@@ -19,13 +19,13 @@ class ModuleDependency : ComparableModuleSpecification
         This module provides the Get-Dependency function to build the tree.
     #>
 
-    [ModuleDependency]$Parent
-    [ModuleDependency[]]$Children
+    [ModuleTreeNode]$Parent
+    [ModuleTreeNode[]]$Children
 
     # Constructors
-    ModuleDependency ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
-    ModuleDependency ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
-    ModuleDependency ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (  #have to chain base ctor because properties are read-only
+    ModuleTreeNode ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
+    ModuleTreeNode ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
+    ModuleTreeNode ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (  #have to chain base ctor because properties are read-only
         $(
             $Hashtable = @{
                 ModuleName        = $ModuleSpec.Name
@@ -41,9 +41,9 @@ class ModuleDependency : ComparableModuleSpecification
 
 
     # List of all dependencies; reverse this to get a viable module import order
-    [System.Collections.Generic.List[ModuleDependency]] ToList()
+    [System.Collections.Generic.List[ModuleTreeNode]] ToList()
     {
-        $List = [System.Collections.Generic.List[ModuleDependency]]::new()
+        $List = [System.Collections.Generic.List[ModuleTreeNode]]::new()
         $List.Add($this)
 
         foreach ($Child in $this.Children)
@@ -55,13 +55,13 @@ class ModuleDependency : ComparableModuleSpecification
     }
 
     # List with duplicates removed
-    [System.Collections.Generic.List[ModuleDependency]] GetDistinctList()
+    [System.Collections.Generic.List[ModuleTreeNode]] GetDistinctList()
     {
-        return [System.Collections.Generic.List[ModuleDependency]]($this.ToList() | Select-Object -Unique)
+        return [System.Collections.Generic.List[ModuleTreeNode]]($this.ToList() | Select-Object -Unique)
     }
 
     # List with duplicates removed and in reverse order
-    [System.Collections.Generic.List[ModuleDependency]] GetModuleImportOrder()
+    [System.Collections.Generic.List[ModuleTreeNode]] GetModuleImportOrder()
     {
         $List = $this.GetDistinctList()
         $List.Reverse()

@@ -1,4 +1,4 @@
-﻿using module ..\Class\ModuleDependency.Class.psm1
+﻿using module ..\Class\ModuleTreeNode.Class.psm1
 
 function Get-Dependency
 {
@@ -28,9 +28,9 @@ function Get-Dependency
         - returns a tuple containing data from the discovered module's manifest, and the URI of the module
 
         .OUTPUTS
-        [ModuleDependency]
+        [ModuleTreeNode]
 
-        This command outputs an object of type [ModuleDependency], which derives from
+        This command outputs an object of type [ModuleTreeNode], which derives from
         [Microsoft.PowerShell.Commands.ModuleSpecification].
 
         .EXAMPLE
@@ -70,7 +70,7 @@ function Get-Dependency
         https://docs.microsoft.com/en-us/dotnet/api/microsoft.powershell.commands.modulespecification
     #>
     [CmdletBinding()]
-    [OutputType([ModuleDependency])]
+    [OutputType([ModuleTreeNode])]
     param
     (
         [Parameter(Mandatory, Position = 0, ValueFromPipeline)]
@@ -87,12 +87,12 @@ function Get-Dependency
         $ModuleUri         = $Found.Item2
 
         # Reimport to set the version discovered by the finder
-        $DependingModule   = [ModuleDependency]@{
+        $DependingModule   = [ModuleTreeNode]@{
             ModuleName    = $DependingModule.Name
             ModuleVersion = $DependingManifest.ModuleVersion
         }
 
-        [ModuleDependency[]]$Required = $DependingManifest.RequiredModules
+        [ModuleTreeNode[]]$Required = $DependingManifest.RequiredModules
 
         if ($Required)
         {

@@ -12,7 +12,7 @@
     ScriptsToProcess  = @(
         #'Class\EquatableModuleSpecification.Class.psm1',
         #'Class\ComparableModuleSpecification.Class.psm1',
-        #'Class\ModuleDependency.Class.psm1'
+        #'Class\ModuleTreeNode.Class.psm1'
     )
     RequiredModules   = @()
     FunctionsToExport = @(
