@@ -77,7 +77,7 @@ function Get-Dependency
         [Microsoft.PowerShell.Commands.ModuleSpecification]$DependingModule,
 
         [Parameter(Mandatory = $false, Position = 1)]
-        [System.Func[Microsoft.PowerShell.Commands.ModuleSpecification, Tuple[hashtable, uri]]]$ManifestFinder = (Get-FilesystemManifestFinder)
+        [scriptblock]$ManifestFinder = (Get-FilesystemManifestFinder)
     )
 
     process

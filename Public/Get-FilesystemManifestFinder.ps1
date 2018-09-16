@@ -16,7 +16,7 @@
         specification, specify whether to prefer the highest matching version or the lowest matching version.
 
         .OUTPUTS
-        [System.Func[Microsoft.PowerShell.Commands.ModuleSpecification, Tuple[hashtable, uri]]]
+        [scriptblock]
 
         A scriptblock that:
 
@@ -43,7 +43,7 @@
         https://docs.microsoft.com/en-us/dotnet/api/microsoft.powershell.commands.modulespecification
     #>
     [CmdletBinding()]
-    [OutputType([System.Func[Microsoft.PowerShell.Commands.ModuleSpecification, Tuple[hashtable, uri]]])]
+    [OutputType([scriptblock])]
     param
     (
         [Parameter(Position = 0, ValueFromPipeline)]
