@@ -16,7 +16,7 @@ class ModuleTreeNode : ComparableModuleSpecification
         - PrintTree()            : Outputs a string with the tree structure shown by indentation
 
         .NOTES
-        This module provides the Get-Dependency function to build the tree.
+        This module provides the Get-ModuleDependency function to build the tree.
     #>
 
     [ModuleTreeNode]$Parent

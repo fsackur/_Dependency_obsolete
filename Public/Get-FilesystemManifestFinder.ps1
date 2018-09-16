@@ -5,7 +5,7 @@
         Gets a pluggable scriptblock for finding modules in a filesystem.
 
         .DESCRIPTION
-        The command Get-Dependency delegates the search for module manifest files to a scriptblock. This command
+        The command Get-ModuleDependency delegates the search for module manifest files to a scriptblock. This command
         creates one possible implementation for that scriptblock.
 
         .PARAMETER ModulePath

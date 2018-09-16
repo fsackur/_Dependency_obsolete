@@ -1,6 +1,6 @@
 ﻿using module ..\Class\ModuleTreeNode.Class.psm1
 
-function Get-Dependency
+function Get-ModuleDependency
 {
     <#
         .SYNOPSIS
@@ -34,7 +34,7 @@ function Get-Dependency
         [Microsoft.PowerShell.Commands.ModuleSpecification].
 
         .EXAMPLE
-        Get-Dependency @{ModuleName = 'AzureTemplating'; ModuleVersion = '1.3.0.7'}
+        Get-ModuleDependency @{ModuleName = 'AzureTemplating'; ModuleVersion = '1.3.0.7'}
 
         Name            Version
         ----            -------
@@ -43,7 +43,7 @@ function Get-Dependency
         Gets the dependency tree for the 'AzureTemplating' module and outputs the module.
 
         .EXAMPLE
-        $Module = Get-Dependency @{ModuleName = 'AzureTemplating'; ModuleVersion = '1.3.0.7'}
+        $Module = Get-ModuleDependency @{ModuleName = 'AzureTemplating'; ModuleVersion = '1.3.0.7'}
         $Module.ToList()
 
         Name            Version
@@ -56,7 +56,7 @@ function Get-Dependency
         modules that it depends on.
 
         .EXAMPLE
-        $Module = Get-Dependency @{ModuleName = 'AzureTemplating'; ModuleVersion = '1.3.0.7'}
+        $Module = Get-ModuleDependency @{ModuleName = 'AzureTemplating'; ModuleVersion = '1.3.0.7'}
         $Module.PrintTree()
 
         AzureTemplating 1.3.0.7
@@ -96,7 +96,7 @@ function Get-Dependency
 
         if ($Required)
         {
-            $DependingModule.Children = $Required | Get-Dependency -ManifestFinder $ManifestFinder
+            $DependingModule.Children = $Required | Get-ModuleDependency -ManifestFinder $ManifestFinder
             $DependingModule.Children | ForEach-Object {$_.Parent = $DependingModule}
         }
 
