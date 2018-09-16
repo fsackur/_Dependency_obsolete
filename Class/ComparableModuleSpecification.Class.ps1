@@ -57,16 +57,17 @@
     }
 
     # List of all dependencies; reverse this to get a viable module import order
-    [System.Collections.Generic.List[Microsoft.PowerShell.Commands.ModuleSpecification]] GetList()
+    [System.Collections.Generic.List[ComparableModuleSpecification]] GetList()
     {
         $List = [System.Collections.Generic.List[Microsoft.PowerShell.Commands.ModuleSpecification]]::new()
-        $this.Children | ForEach-Object {
+        foreach ($Child in $this.Children)
+        {
             $ChildList = $_.GetList()
             if ($ChildList) {$List.AddRange([System.Collections.Generic.List[Microsoft.PowerShell.Commands.ModuleSpecification]]$ChildList)}
         }
         $List.Add($this)
 
-        [System.Collections.Generic.List[Microsoft.PowerShell.Commands.ModuleSpecification]]$L2 = $List | Get-Unique
+        [System.Collections.Generic.List[ComparableModuleSpecification]]$L2 = $List | Get-Unique
         return $L2
     }
 
