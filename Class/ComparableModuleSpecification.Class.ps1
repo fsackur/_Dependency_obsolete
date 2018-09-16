@@ -6,10 +6,15 @@
     # Constructor; just chains base ctor
     ComparableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
 
-    # Override methods from Object
+
+    # Override method from Object
     [string] ToString() {return $this.Name, $this.Version -join ' '}
-    [int] GetHashCode() {return $this.ToString().GetHashCode()}
-    [bool] Equals([System.Object] $Obj)
+
+    # Important for equality testing
+    [int] GetHashCode() {return $this.ToString().ToLower().GetHashCode()}
+
+    # Override method from Object by testing for null and calling implementation of IEquatable
+    [bool] Equals([System.Object]$Obj)
     {
         $ComparisonObj = $Obj -as [Microsoft.PowerShell.Commands.ModuleSpecification]
         if ($null -eq $ComparisonObj)
@@ -21,9 +26,11 @@
             return $this.Equals($ComparisonObj)
         }
     }
-    [bool] Equals([Microsoft.PowerShell.Commands.ModuleSpecification] $ComparisonObj)
+
+    # Implement IEquatable
+    [bool] Equals([Microsoft.PowerShell.Commands.ModuleSpecification]$ComparisonObj)
     {
-        return $this.Name -ilike $ComparisonObj.Name
+        return $this.ToString() -ilike $ComparisonObj.ToString()
     }
 
     # Implement IComparable. This allows comparison operators to work as expected.
