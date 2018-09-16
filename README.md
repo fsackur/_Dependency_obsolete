@@ -14,6 +14,6 @@ This module works with module manifests (aka .psd1 files) and examines the `Requ
 
 Provide `Get-Dependency` with a depending module for which you need to examine or import other modules. The command looks at the module manifest, then finds the dependency modules defined in the `RequiredModules` field.
 
-The algorithm to find the dependency modules is pluggable. A base implementation is provided in the `Get-ManifestReader` command. This command outputs a scriptblock that accepts a module specification object and returns the manifest contents of that module. The scriptblock searches the containing folder of the provided module.
+The algorithm to find the dependency modules is pluggable. A base implementation is provided in the `Get-ManifestFinder` command. This command outputs a scriptblock that accepts a module specification object and returns the manifest contents of that module. The scriptblock searches the containing folder of the provided module.
 
 However, you can extend the functionality to search other module repositories, for example, Github, by providing any scriptblock that accepts a module specification object and returns the manifest content of that module as a hashtable.

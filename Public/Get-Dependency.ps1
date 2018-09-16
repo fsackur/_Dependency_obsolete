@@ -12,7 +12,7 @@ function Get-Dependency
         tree structure.
 
         The search algorithm is pluggable. By default, paths in the PSModulePath environment variable will be searched. The
-        user can alter this behaviour by passing a scriptblock to the ManifestReader parameter. The scriptblock could
+        user can alter this behaviour by passing a scriptblock to the ManifestFinder parameter. The scriptblock could
         implement search for an online gallery or source control system, for example.
 
         Modules must have a module manifest, or an ItemNotFound exception will be thrown.
@@ -20,7 +20,7 @@ function Get-Dependency
         .PARAMETER DependingModule
         Specify the module for which to build the dependency tree.
 
-        .PARAMETER ManifestReader
+        .PARAMETER ManifestFinder
         Specify a scriptblock with the following characteristics:
 
         - Accepts an argument of type Microsoft.PowerShell.Commands.ModuleSpecification
@@ -77,13 +77,13 @@ function Get-Dependency
         [Microsoft.PowerShell.Commands.ModuleSpecification]$DependingModule,
 
         [Parameter(Mandatory = $false, Position = 1)]
-        [scriptblock]$ManifestReader = (Get-FilesystemManifestReader)
+        [scriptblock]$ManifestFinder = (Get-FilesystemManifestFinder)
     )
 
     process
     {
-        $DependingManifest = & $ManifestReader $DependingModule
-        $DependingModule   = [ModuleDependency]@{                   # Reimport to set the version discovered by the reader
+        $DependingManifest = & $ManifestFinder $DependingModule
+        $DependingModule   = [ModuleDependency]@{                   # Reimport to set the version discovered by the Finder
             ModuleName    = $DependingModule.Name
             ModuleVersion = $DependingManifest.ModuleVersion
         }
@@ -92,7 +92,7 @@ function Get-Dependency
 
         if ($Required)
         {
-            $DependingModule.Children = $Required | Get-Dependency -ManifestReader $ManifestReader
+            $DependingModule.Children = $Required | Get-Dependency -ManifestFinder $ManifestFinder
             $DependingModule.Children | ForEach-Object {$_.Parent = $DependingModule}
         }
 

@@ -1,4 +1,4 @@
-﻿function Get-FilesystemManifestReader
+﻿function Get-FilesystemManifestFinder
 {
     <#
         .SYNOPSIS
@@ -25,7 +25,7 @@
         - returns a hashtable containing data from the first discovered module's manifest
 
         .EXAMPLE
-        Get-FilesystemManifestReader -ModulePath 'C:\dev'
+        Get-FilesystemManifestFinder -ModulePath 'C:\dev'
 
         {
             param
@@ -63,7 +63,7 @@
         $ModulePath = $ModulePath -split ';'
 
 
-        $FilesystemReader = {
+        $FilesystemFinder = {
             <#
                 .SYNOPSIS
                 Tests whether a version falls within the acceptable range specified by a module specification object.
@@ -87,8 +87,8 @@
                 The contents of the discovered module manifest file.
 
                 .EXAMPLE
-                $Reader = Get-FilesystemManifestReader -ModulePath 'C:\dev'
-                & $Reader @{ModuleName = 'AzureTemplating'; ModuleVersion = '1.3.0.7'}
+                $Finder = Get-FilesystemManifestFinder -ModulePath 'C:\dev'
+                & $Finder @{ModuleName = 'AzureTemplating'; ModuleVersion = '1.3.0.7'}
 
                 @{
                     Description = 'Module for working with Azure templates.'
@@ -154,6 +154,6 @@
         # values were in the outer function.
 
 
-        return $FilesystemReader
+        return $FilesystemFinder
     }
 }
