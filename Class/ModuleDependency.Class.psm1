@@ -48,8 +48,7 @@ class ModuleDependency : ComparableModuleSpecification
 
         foreach ($Child in $this.Children)
         {
-            $ChildList = $Child.ToList()
-            if ($ChildList) {$List.AddRange([System.Collections.Generic.List[ModuleDependency]]$ChildList)}
+            $List.AddRange($Child.ToList())
         }
 
         return $List
@@ -75,10 +74,11 @@ class ModuleDependency : ComparableModuleSpecification
         return $this.PrintTree("")
     }
 
-    hidden [string] PrintTree([string]$Indentation)
+    [string] PrintTree([string]$Indentation)
     {
-        $SB = New-Object System.Text.StringBuilder (200)
+        $SB   = New-Object System.Text.StringBuilder (200)
         $null = $SB.Append($Indentation).AppendLine($this.ToString())  # Output self
+
         foreach ($Child in $this.Children)
         {
             # Output children, one by one, with increased indentation
@@ -88,6 +88,7 @@ class ModuleDependency : ComparableModuleSpecification
                 $null = $SB.Append($ChildTree)
             }
         }
+
         return $SB.ToString()
     }
 }
