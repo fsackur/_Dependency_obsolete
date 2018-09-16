@@ -1,7 +1,7 @@
 ﻿class ModuleDependency : ComparableModuleSpecification
 {
-    [ModuleDependency[]] $Parent
-    [ModuleDependency[]] $Children
+    [ModuleDependency]$Parent
+    [ModuleDependency[]]$Children
 
     # Constructor; just chains base ctor
     ModuleDependency ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
@@ -54,13 +54,19 @@
     {
         return $this.PrintTree("")
     }
-    [string] PrintTree([string]$Indentation = "")
+
+    hidden [string] PrintTree([string]$Indentation)
     {
         $SB = New-Object System.Text.StringBuilder (200)
         $null = $SB.Append($Indentation).AppendLine($this.ToString())  # Output self
         foreach ($Child in $this.Children)
         {
-            $null = $SB.AppendLine($Child.PrintTree(($Indentation + "    ")))  # Output children, one by one, with increased indentation
+            # Output children, one by one, with increased indentation
+            $ChildTree = $Child.PrintTree(($Indentation + "    "))
+            if (-not [string]::IsNullOrWhiteSpace($ChildTree))
+            {
+                $null = $SB.Append($ChildTree)
+            }
         }
         return $SB.ToString()
     }
