@@ -64,7 +64,9 @@ class ModuleDependency : ComparableModuleSpecification
     # List with duplicates removed and in reverse order
     [System.Collections.Generic.List[ModuleDependency]] GetModuleImportOrder()
     {
-        return $this.GetDistinctList().Reverse()
+        $List = $this.GetDistinctList()
+        $List.Reverse()
+        return $List
     }
 
     # Visual output with dependencies indented
