@@ -22,7 +22,7 @@
 
         - Accepts an argument of type Microsoft.PowerShell.Commands.ModuleSpecification
         - Searches the provided path list for modules matching that module specification
-        - returns a hashtable containing data from the first discovered module's manifest
+        - returns a tuple containing data from the discovered module's manifest, and the URI of the module
 
         .EXAMPLE
         Get-FilesystemManifestFinder -ModulePath 'C:\dev'
@@ -80,9 +80,9 @@
                 The module specification against which the version is to be tested.
 
                 .OUTPUTS
-                [hashtable]
+                [Tuple[hashtable, uri]]
 
-                The contents of the discovered module manifest file.
+                A tuple containing data from the first discovered module's manifest, and the URI of the module.
 
                 .EXAMPLE
                 $Finder = Get-FilesystemManifestFinder -ModulePath 'C:\dev'
@@ -97,7 +97,7 @@
                 Searches C:\dev for the AzureTemplating module, and returns the contents of the module manifest.
             #>
             [CmdletBinding()]
-            [OutputType([hashtable])]
+            [OutputType([Tuple[hashtable, uri]])]
             param
             (
                 [Parameter(Mandatory, Position = 0, ValueFromPipeline)]
@@ -138,13 +138,13 @@
                     $Manifest = Import-PowerShellDataFile $Psd1Path -ErrorAction Stop
                     if (Test-VersionMeetsModuleSpec $ModuleSpec $Manifest.ModuleVersion)
                     {
-                        return $Manifest
+                        return [Tuple[hashtable, uri]]::new($Manifest, [uri]$Psd1Path)
                     }
                 }
             }
 
             throw New-Object System.Management.Automation.ItemNotFoundException (
-                "Could not find any module meeting specification '$ModuleSpec' in path list '$($ModulePath -join ';')'."
+                "Could not find any module meeting specification '$($ModuleSpec)' in path list '$($ModulePath -join ';')'."
             )
 
         }.GetNewClosure()   # GetNewClosure binds any variables in the scriptblock to the values they have in the enclosing scope.

@@ -25,7 +25,7 @@ function Get-Dependency
 
         - Accepts an argument of type Microsoft.PowerShell.Commands.ModuleSpecification
         - Searches for modules matching that module specification
-        - returns a hashtable containing data from the discovered module's manifest
+        - returns a tuple containing data from the discovered module's manifest, and the URI of the module
 
         .OUTPUTS
         [ModuleDependency]
@@ -82,8 +82,12 @@ function Get-Dependency
 
     process
     {
-        $DependingManifest = & $ManifestFinder $DependingModule
-        $DependingModule   = [ModuleDependency]@{                   # Reimport to set the version discovered by the Finder
+        $Found             = $ManifestFinder.Invoke($DependingModule)
+        $DependingManifest = $Found.Item1
+        $ModuleUri         = $Found.Item2
+
+        # Reimport to set the version discovered by the finder
+        $DependingModule   = [ModuleDependency]@{
             ModuleName    = $DependingModule.Name
             ModuleVersion = $DependingManifest.ModuleVersion
         }
