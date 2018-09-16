@@ -16,6 +16,7 @@
     FunctionsToExport = @(
         '*'
     )
+    FormatsToProcess  = @('Dependency.Format.ps1xml')
 
     PrivateData = @{
         PSData = @{
