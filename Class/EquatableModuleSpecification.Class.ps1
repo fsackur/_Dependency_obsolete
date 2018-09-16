@@ -1,10 +1,9 @@
 ﻿class EquatableModuleSpecification : Microsoft.PowerShell.Commands.ModuleSpecification, IEquatable[Microsoft.PowerShell.Commands.ModuleSpecification]
 {
-    # Constructor; just chains base ctor
+    # Constructors
+    EquatableModuleSpecification ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
     EquatableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
-
-    # 'Type accelerator' constructor; have to chain base ctor because properties are read-only
-    EquatableModuleSpecification ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (
+    EquatableModuleSpecification ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (  #have to chain base ctor because properties are read-only
         $(
             $Hashtable = @{
                 ModuleName        = $ModuleSpec.Name
@@ -18,6 +17,7 @@
         )
     ) {}
 
+    # A module specification has either a Version or a RequiredVersion, but not both. This gets whichever it has.
     [version] GetVersion()
     {
         if ($this.RequiredVersion) {return [version]$this.RequiredVersion} else {return [version]$this.Version}

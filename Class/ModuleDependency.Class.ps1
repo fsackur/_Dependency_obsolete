@@ -3,11 +3,10 @@
     [ModuleDependency]$Parent
     [ModuleDependency[]]$Children
 
-    # Constructor; just chains base ctor
+    # Constructors
+    ModuleDependency ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
     ModuleDependency ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
-
-    # 'Type accelerator' constructor; have to chain base ctor because properties are read-only
-    ModuleDependency ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (
+    ModuleDependency ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (  #have to chain base ctor because properties are read-only
         $(
             $Hashtable = @{
                 ModuleName        = $ModuleSpec.Name

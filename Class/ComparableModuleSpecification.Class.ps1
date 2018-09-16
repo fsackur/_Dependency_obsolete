@@ -1,10 +1,9 @@
 ﻿class ComparableModuleSpecification : EquatableModuleSpecification, IComparable
 {
-    # Constructor; just chains base ctor
+    # Constructors
+    ComparableModuleSpecification ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
     ComparableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
-
-    # 'Type accelerator' constructor; have to chain base ctor because properties are read-only
-    ComparableModuleSpecification ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (
+    ComparableModuleSpecification ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (  #have to chain base ctor because properties are read-only
         $(
             $Hashtable = @{
                 ModuleName        = $ModuleSpec.Name
