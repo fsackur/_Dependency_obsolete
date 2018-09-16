@@ -1,4 +1,7 @@
-﻿class ModuleDependency : ComparableModuleSpecification
+﻿using module .\EquatableModuleSpecification.Class.psm1
+using module .\ComparableModuleSpecification.Class.psm1
+
+class ModuleDependency : ComparableModuleSpecification
 {
     <#
         .SYNOPSIS

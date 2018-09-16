@@ -1,4 +1,6 @@
-﻿function Get-Dependency
+﻿using module ..\Class\ModuleDependency.Class.psm1
+
+function Get-Dependency
 {
     <#
         .SYNOPSIS

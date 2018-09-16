@@ -1,4 +1,4 @@
-﻿class EquatableModuleSpecification : Microsoft.PowerShell.Commands.ModuleSpecification, IEquatable[EquatableModuleSpecification]
+﻿class EquatableModuleSpecification : Microsoft.PowerShell.Commands.ModuleSpecification, IEquatable[Microsoft.PowerShell.Commands.ModuleSpecification]
 {
     <#
         .SYNOPSIS
@@ -60,7 +60,7 @@
     # Override method from Object by testing for null and calling implementation of IEquatable
     [bool] Equals([System.Object]$Obj)
     {
-        $ComparisonObj = $Obj -as [EquatableModuleSpecification]
+        $ComparisonObj = $Obj -as [Microsoft.PowerShell.Commands.ModuleSpecification]
         if ($null -eq $ComparisonObj)
         {
             return $false
@@ -72,8 +72,9 @@
     }
 
     # Implement IEquatable
-    [bool] Equals([EquatableModuleSpecification]$ComparisonObj)     # Base type does not have useful ToString()
+    [bool] Equals([Microsoft.PowerShell.Commands.ModuleSpecification]$ComparisonObj)
     {
+        $C = [EquatableModuleSpecification]$ComparisonObj   # Base type does not have useful ToString()
         return $this.ToString() -ilike $ComparisonObj.ToString()
     }
 }

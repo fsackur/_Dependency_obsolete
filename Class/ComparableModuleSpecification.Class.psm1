@@ -1,4 +1,6 @@
-﻿class ComparableModuleSpecification : EquatableModuleSpecification, IComparable
+﻿using module .\EquatableModuleSpecification.Class.psm1
+
+class ComparableModuleSpecification : EquatableModuleSpecification, IComparable
 {
     <#
         .SYNOPSIS
