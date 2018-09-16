@@ -9,6 +9,9 @@
     Copyright         = '(c) 2018 Freddie Sackur. All rights reserved.'
     PowerShellVersion = '5.0'
 
+    ScriptsToProcess  = @(
+        'Class\ComparableModuleSpecification.Class.ps1'
+    )
     RequiredModules   = @()
     FunctionsToExport = @(
         '*'
