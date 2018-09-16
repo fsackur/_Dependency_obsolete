@@ -66,17 +66,15 @@
         $FilesystemFinder = {
             <#
                 .SYNOPSIS
-                Tests whether a version falls within the acceptable range specified by a module specification object.
+                Finds a module mamifest matching a module specification within a filesystem.
 
                 .DESCRIPTION
-                Given a module specification, tests whether a given version satisifes it.
+                Searches a list of folder paths for a module. The name of the module is taken from the input module
+                specification.
 
-                If the module specification has a RequiredVersion, then this command performs an exact comparison against
-                the RequiredVersion property. Otherwise, this command tests that the version is greater than or equal to
-                the Version property and, if present, less than or equal to the MaximumVersion property.
+                Looks within module folders for a version that matches the version component of the module specification.
 
-                .PARAMETER Version
-                The version to test against the module specification.
+                Two input parameters, 'ModulePath' and 'VersionMatchingPreference', are set at creation time, not at runtime.
 
                 .PARAMETER ModuleSpec
                 The module specification against which the version is to be tested.
