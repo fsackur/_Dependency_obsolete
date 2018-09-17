@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Configuration>
+    <ViewDefinitions>
+
+        <View>
+            <Name>ModuleSpecification</Name>
+            <ViewSelectedBy>
+                <TypeName>EquatableModuleSpecification</TypeName>
+                <TypeName>ComparableModuleSpecification</TypeName>
+                <TypeName>ModuleTreeNode</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+
+                <TableHeaders>
+                    <TableColumnHeader>
+                        <Label>Name</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Version</Label>
+                    </TableColumnHeader>
+                </TableHeaders>
+
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>$_.GetVersion()</ScriptBlock>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+
+            </TableControl>
+        </View>
+
+    </ViewDefinitions>
+</Configuration>
