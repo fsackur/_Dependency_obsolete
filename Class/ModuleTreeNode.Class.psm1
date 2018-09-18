@@ -63,9 +63,9 @@ class ModuleTreeNode : ComparableModuleSpecification
     # List with duplicates removed and in reverse order
     [System.Collections.Generic.List[ModuleTreeNode]] GetModuleImportOrder()
     {
-        $List = $this.GetDistinctList()
+        $List = $this.ToList()
         $List.Reverse()
-        return $List
+        return [System.Collections.Generic.List[ModuleTreeNode]]($List | Select-Object -Unique)
     }
 
     # Visual output with dependencies indented
