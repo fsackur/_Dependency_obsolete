@@ -51,6 +51,19 @@ class EquatableModuleSpecification : ModuleSpecification, IEquatable[ModuleSpeci
         if ($this.RequiredVersion) {return [version]$this.RequiredVersion} else {return [version]$this.Version}
     }
 
+    # Given a module represented by a module spec, does it meet the requirements of another given module spec?
+    [bool] MeetsSpec([ModuleSpecification]$RefSpec)
+    {
+        return (
+            $this.Name -eq $RefSpec.Name -and
+            (-not $RefSpec.Guid -or $this.Guid -eq $RefSpec.Guid) -and
+            (-not $RefSpec.Version -or $this.GetVersion() -ge $RefSpec.Version) -and
+            (-not $RefSpec.MaximumVersion -or $this.GetVersion() -le $RefSpec.MaximumVersion) -and
+            (-not $RefSpec.RequiredVersion -or $this.GetVersion() -eq $RefSpec.RequiredVersion)
+        )
+    }
+
+
     # Override method from Object
     [string] ToString() {
         return $this.Name, $this.GetVersion() -join ' '
@@ -79,4 +92,5 @@ class EquatableModuleSpecification : ModuleSpecification, IEquatable[ModuleSpeci
         $C = [EquatableModuleSpecification]$ComparisonObj   # Base type does not have useful ToString()
         return $this.ToString() -ilike $ComparisonObj.ToString()
     }
+
 }
