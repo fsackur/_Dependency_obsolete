@@ -24,19 +24,8 @@ class ComparableModuleSpecification : EquatableModuleSpecification, IComparable
     # Constructors
     ComparableModuleSpecification ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
     ComparableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
-    ComparableModuleSpecification ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (  #have to chain base ctor because properties are read-only
-        $(
-            $Hashtable = @{
-                ModuleName        = $ModuleSpec.Name
-                Guid              = $ModuleSpec.Guid
-                ModuleVersion     = $ModuleSpec.Version
-                RequiredVersion   = $ModuleSpec.RequiredVersion
-            }
-            if ($ModuleSpec.MaximumVersion) {$Hashtable.MaximumVersion = $ModuleSpec.MaximumVersion}
-
-            $Hashtable
-        )
-    ) {}
+    ComparableModuleSpecification ([ModuleSpecification]$ModuleSpec) : base ($ModuleSpec) {}
+    ComparableModuleSpecification ([PSModuleInfo]$Module) : base ($Module) {}
 
 
     # Implement IComparable. This allows comparison operators to work as expected.

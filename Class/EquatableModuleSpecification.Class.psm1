@@ -31,19 +31,27 @@ class EquatableModuleSpecification : ModuleSpecification, IEquatable[ModuleSpeci
     # Constructors
     EquatableModuleSpecification ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
     EquatableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
-    EquatableModuleSpecification ([ModuleSpecification]$ModuleSpec) : base (  # have to chain base ctor because properties are read-only
-        $(
-            $Hashtable = @{
-                ModuleName        = $ModuleSpec.Name
-                Guid              = $ModuleSpec.Guid
-                ModuleVersion     = $ModuleSpec.Version
-                RequiredVersion   = $ModuleSpec.RequiredVersion
-            }
-            if ($ModuleSpec.MaximumVersion) {$Hashtable.MaximumVersion = $ModuleSpec.MaximumVersion}
+    EquatableModuleSpecification ([ModuleSpecification]$ModuleSpec) : base ($(
+        $Hashtable = @{
+            ModuleName        = $ModuleSpec.Name
+            Guid              = $ModuleSpec.Guid
+            ModuleVersion     = $ModuleSpec.Version
+            RequiredVersion   = $ModuleSpec.RequiredVersion
+        }
+        # Base .ctor won't accept null in this field
+        if ($ModuleSpec.MaximumVersion)
+        {
+            $Hashtable.MaximumVersion = $ModuleSpec.MaximumVersion
+        }
 
-            $Hashtable
-        )
-    ) {}
+        $Hashtable
+    )) {}
+
+    EquatableModuleSpecification ([PSModuleInfo]$Module) : base (@{
+        ModuleName        = $Module.Name
+        Guid              = $Module.Guid
+        ModuleVersion     = $Module.Version
+    }) {}
 
     # A module specification has either a Version or a RequiredVersion, but not both. This gets whichever it has.
     [version] GetVersion()

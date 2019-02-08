@@ -27,20 +27,8 @@ class ModuleSpec : ComparableModuleSpecification
     # Constructors
     ModuleSpec ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
     ModuleSpec ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
-    ModuleSpec ([ModuleSpecification]$ModuleSpec) : base (  #have to chain base ctor because properties are read-only
-        $(
-            $Hashtable = @{
-                ModuleName        = $ModuleSpec.Name
-                Guid              = $ModuleSpec.Guid
-                ModuleVersion     = $ModuleSpec.Version
-                RequiredVersion   = $ModuleSpec.RequiredVersion
-            }
-            if ($ModuleSpec.MaximumVersion) {$Hashtable.MaximumVersion = $ModuleSpec.MaximumVersion}
-
-            $Hashtable
-        )
-    ) {}
-
+    ModuleSpec ([ModuleSpecification]$ModuleSpec) : base ($ModuleSpec) {}
+    ModuleSpec ([PSModuleInfo]$Module) : base ($Module) {}
 
     # List of all dependencies; reverse this to get a viable module import order
     [List[ModuleSpec]] ToList()
