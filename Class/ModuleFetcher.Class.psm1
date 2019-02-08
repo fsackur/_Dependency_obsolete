@@ -21,36 +21,22 @@ class ModuleFetcher
 
 class FileSystemModuleFetcher : ModuleFetcher
 {
-    hidden static [string[]] $ModulePath = $env:PSModulePath -split ';' -replace '\\?$', '\*'
-    hidden static [PSModuleInfo[]] $AvailableModules
-
-    static [void] SetModulePath([string]$ModulePath)
-    {
-        if ([FileSystemModuleFetcher]::ModulePath -ne $ModulePath)
-        {
-            [FileSystemModuleFetcher]::ModulePath = $ModulePath -split ';' -replace '\\?\*?$', '\*'
-            [FileSystemModuleFetcher]::AvailableModules = $null
-        }
-    }
-
-    hidden static [PSModuleInfo[]] GetAvailableModules ()
-    {
-        if (-not ([FileSystemModuleFetcher]::AvailableModules))
-        {
-            [FileSystemModuleFetcher]::AvailableModules = Get-Module ([FileSystemModuleFetcher]::ModulePath) -ListAvailable
-        }
-
-        return [FileSystemModuleFetcher]::AvailableModules
-    }
+    static [string[]] $ModulePath = $env:PSModulePath -split ';' -replace '\\?$'
 
     [PSModuleInfo] GetModule([ModuleSpecification]$ModuleSpec)
     {
-        $Module = [FileSystemModuleFetcher]::GetAvailableModules().Where({
+        $SearchPath = [FileSystemModuleFetcher]::ModulePath.ForEach({
+            Join-Path $_ $ModuleSpec.Name
+        })
+        Write-Debug "Searching '$($SearchPath -join "', '")'..."
+
+        $Module = (Get-Module $SearchPath -ListAvailable).Where({
             ([EquatableModuleSpecification]$_).MeetsSpec($ModuleSpec)
         }, 'First')
 
         if ($Module)
         {
+            Write-Debug "Found module '$Module'."
             return $Module[0]
         }
         else
