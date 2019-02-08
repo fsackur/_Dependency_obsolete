@@ -1,4 +1,5 @@
-﻿using module .\EquatableModuleSpecification.Class.psm1
+﻿using namespace Microsoft.PowerShell.Commands
+using module .\EquatableModuleSpecification.Class.psm1
 
 class ComparableModuleSpecification : EquatableModuleSpecification, IComparable
 {
