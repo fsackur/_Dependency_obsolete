@@ -21,11 +21,21 @@ class ModuleFetcher
 
 class FileSystemModuleFetcher : ModuleFetcher
 {
-    static [string[]] $ModulePath = $env:PSModulePath -split ';' -replace '\\?$'
+    FileSystemModuleFetcher ()
+    {
+        $this.ModulePath = $env:PSModulePath -split ';' -replace '\\?$'
+    }
+
+    FileSystemModuleFetcher ([string[]] $ModulePath)
+    {
+        $this.ModulePath = $ModulePath -split ';' -replace '\\?$'
+    }
+
+    hidden [string[]] $ModulePath
 
     [PSModuleInfo] GetModule([ModuleSpecification]$ModuleSpec)
     {
-        $SearchPath = [FileSystemModuleFetcher]::ModulePath.ForEach({
+        $SearchPath = $this.ModulePath.ForEach({
             Join-Path $_ $ModuleSpec.Name
         })
         Write-Debug "Searching '$($SearchPath -join "', '")'..."
