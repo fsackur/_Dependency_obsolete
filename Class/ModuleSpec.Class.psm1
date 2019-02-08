@@ -3,7 +3,7 @@ using namespace Microsoft.PowerShell.Commands
 using module .\EquatableModuleSpecification.Class.psm1
 using module .\ComparableModuleSpecification.Class.psm1
 
-class ModuleTreeNode : ComparableModuleSpecification
+class ModuleSpec : ComparableModuleSpecification
 {
     <#
         .SYNOPSIS
@@ -21,13 +21,13 @@ class ModuleTreeNode : ComparableModuleSpecification
         This module provides the Get-ModuleDependency function to build the tree.
     #>
 
-    [ModuleTreeNode]$Parent
-    [ModuleTreeNode[]]$Children
+    [ModuleSpec]$Parent
+    [ModuleSpec[]]$Children
 
     # Constructors
-    ModuleTreeNode ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
-    ModuleTreeNode ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
-    ModuleTreeNode ([ModuleSpecification]$ModuleSpec) : base (  #have to chain base ctor because properties are read-only
+    ModuleSpec ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
+    ModuleSpec ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
+    ModuleSpec ([ModuleSpecification]$ModuleSpec) : base (  #have to chain base ctor because properties are read-only
         $(
             $Hashtable = @{
                 ModuleName        = $ModuleSpec.Name
@@ -43,9 +43,9 @@ class ModuleTreeNode : ComparableModuleSpecification
 
 
     # List of all dependencies; reverse this to get a viable module import order
-    [List[ModuleTreeNode]] ToList()
+    [List[ModuleSpec]] ToList()
     {
-        $List = [List[ModuleTreeNode]]::new()
+        $List = [List[ModuleSpec]]::new()
         $List.Add($this)
 
         foreach ($Child in $this.Children)
@@ -57,17 +57,17 @@ class ModuleTreeNode : ComparableModuleSpecification
     }
 
     # List with duplicates removed
-    [List[ModuleTreeNode]] GetDistinctList()
+    [List[ModuleSpec]] GetDistinctList()
     {
-        return [List[ModuleTreeNode]]($this.ToList() | Select-Object -Unique)
+        return [List[ModuleSpec]]($this.ToList() | Select-Object -Unique)
     }
 
     # List with duplicates removed and in reverse order
-    [List[ModuleTreeNode]] GetModuleImportOrder()
+    [List[ModuleSpec]] GetModuleImportOrder()
     {
         $List = $this.ToList()
         $List.Reverse()
-        return [List[ModuleTreeNode]]($List | Select-Object -Unique)
+        return [List[ModuleSpec]]($List | Select-Object -Unique)
     }
 
     # Visual output with dependencies indented
