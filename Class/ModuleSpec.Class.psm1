@@ -22,10 +22,10 @@ class ModuleSpec : ComparableModuleSpecification
     #>
 
     [ModuleSpec]$Parent
-    [ModuleSpec[]]$Children
+    [ModuleSpec[]]$Children = [ModuleSpec[]]@()
 
     # Constructors
-    ModuleSpec ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
+    ModuleSpec ([string]$Name) : base ($Name) {}
     ModuleSpec ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
     ModuleSpec ([ModuleSpecification]$ModuleSpec) : base ($ModuleSpec) {}
     ModuleSpec ([PSModuleInfo]$Module) : base ($Module) {}

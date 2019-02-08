@@ -22,10 +22,10 @@ class ComparableModuleSpecification : EquatableModuleSpecification, IComparable
     #>
 
     # Constructors
-    ComparableModuleSpecification ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
     ComparableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
     ComparableModuleSpecification ([ModuleSpecification]$ModuleSpec) : base ($ModuleSpec) {}
     ComparableModuleSpecification ([PSModuleInfo]$Module) : base ($Module) {}
+    ComparableModuleSpecification ([string]$Name) : base ($Name) {}
 
 
     # Implement IComparable. This allows comparison operators to work as expected.

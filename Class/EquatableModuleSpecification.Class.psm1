@@ -29,7 +29,7 @@ class EquatableModuleSpecification : ModuleSpecification, IEquatable[ModuleSpeci
     #>
 
     # Constructors
-    EquatableModuleSpecification ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
+    EquatableModuleSpecification ([string]$Name) : base ($Name) {}
     EquatableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
     EquatableModuleSpecification ([ModuleSpecification]$ModuleSpec) : base ($(
         $Hashtable = @{
@@ -47,11 +47,18 @@ class EquatableModuleSpecification : ModuleSpecification, IEquatable[ModuleSpeci
         $Hashtable
     )) {}
 
-    EquatableModuleSpecification ([PSModuleInfo]$Module) : base (@{
-        ModuleName        = $Module.Name
-        Guid              = $Module.Guid
-        ModuleVersion     = $Module.Version
-    }) {}
+    EquatableModuleSpecification ([PSModuleInfo]$Module) : base ($(
+        $Hashtable = @{
+            ModuleName    = $Module.Name
+            ModuleVersion = $Module.Version
+        }
+        if ($Module.Guid -and $Module.Guid -ne [Guid]'00000000-0000-0000-0000-000000000000')
+        {
+            $Hashtable.Guid = $Module.Guid
+        }
+
+        $Hashtable
+    )) {}
 
     # A module specification has either a Version or a RequiredVersion, but not both. This gets whichever it has.
     [version] GetVersion()

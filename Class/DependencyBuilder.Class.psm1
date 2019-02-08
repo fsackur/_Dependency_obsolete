@@ -5,28 +5,17 @@ using module .\ModuleFetcher.Class.psm1
 
 class DependencyBuilder
 {
-    [ModuleFetcher]$Fetcher = [FileSystemModuleFetcher]::new()
+    [ModuleFetcher]$Fetcher = [FileSystemModuleFetcher]::new('C:\Githubdata')
 
     [ModuleSpec] GetDependencies([ModuleSpec]$Node)
     {
-        try
-        {
-            $NodeAsModule = $this.Fetcher.GetModule($Node)
-        }
-        catch [ItemNotFoundException]
-        {
-            return $null
-        }
+        # throws ItemNotFoundException
+        $NodeAsModule = $this.Fetcher.GetModule($Node)
 
         $NodeAsModule.RequiredModules.ForEach({
-
             $ChildNode = [ModuleSpec]$_
-
             $ChildNode.Parent = $Node
-
-            $Node.Children.Add(
-                $this.GetDependencies($ChildNode)
-            )
+            $Node.Children += $this.GetDependencies($ChildNode)
         })
 
         return $Node
