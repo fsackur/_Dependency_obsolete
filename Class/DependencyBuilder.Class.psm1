@@ -5,7 +5,13 @@ using module .\ModuleFetcher.Class.psm1
 
 class DependencyBuilder
 {
-    [ModuleFetcher]$Fetcher = [FileSystemModuleFetcher]::new('C:\Githubdata')
+    DependencyBuilder ([ModuleFetcher]$Fetcher)
+    {
+        $this.Fetcher = $Fetcher
+    }
+
+    [ValidateNotNull()]
+    [ModuleFetcher]$Fetcher
 
     [ModuleSpec] GetDependencies([ModuleSpec]$Node)
     {
