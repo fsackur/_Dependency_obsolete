@@ -1,0 +1,3 @@
+[submodule "Tests/MockingPSClassesPoC"]
+	path = Tests/MockingPSClassesPoC
+	url = https://github.com/fsackur/MockingPSClassesPoC
