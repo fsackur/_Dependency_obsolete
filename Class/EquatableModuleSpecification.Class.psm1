@@ -102,10 +102,15 @@ class EquatableModuleSpecification : ModuleSpecification, IEquatable[ModuleSpeci
     }
 
     # Implement IEquatable
-    [bool] Equals([ModuleSpecification]$ComparisonObj)
+    [bool] Equals([ModuleSpecification]$RefSpec)
     {
-        $C = [EquatableModuleSpecification]$ComparisonObj   # Base type does not have useful ToString()
-        return $this.ToString() -ilike $ComparisonObj.ToString()
+        return (
+            $this.Name -ieq $RefSpec.Name -and
+            (-not $RefSpec.Guid -or $this.Guid -eq $RefSpec.Guid) -and
+            (-not $RefSpec.Version -or $this.GetVersion() -eq $RefSpec.Version) -and
+            (-not $RefSpec.MaximumVersion -or $this.GetVersion() -eq $RefSpec.MaximumVersion) -and
+            (-not $RefSpec.RequiredVersion -or $this.GetVersion() -eq $RefSpec.RequiredVersion)
+        )
     }
 
 }
