@@ -8,7 +8,7 @@
             <ViewSelectedBy>
                 <TypeName>EquatableModuleSpecification</TypeName>
                 <TypeName>ComparableModuleSpecification</TypeName>
-                <TypeName>ModuleTreeNode</TypeName>
+                <TypeName>ModuleSpec</TypeName>
             </ViewSelectedBy>
             <TableControl>
 

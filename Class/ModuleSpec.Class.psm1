@@ -1,7 +1,9 @@
-﻿using module .\EquatableModuleSpecification.Class.psm1
+﻿using namespace System.Collections.Generic
+using namespace Microsoft.PowerShell.Commands
+using module .\EquatableModuleSpecification.Class.psm1
 using module .\ComparableModuleSpecification.Class.psm1
 
-class ModuleTreeNode : ComparableModuleSpecification
+class ModuleSpec : ComparableModuleSpecification
 {
     <#
         .SYNOPSIS
@@ -19,31 +21,19 @@ class ModuleTreeNode : ComparableModuleSpecification
         This module provides the Get-ModuleDependency function to build the tree.
     #>
 
-    [ModuleTreeNode]$Parent
-    [ModuleTreeNode[]]$Children
+    [ModuleSpec]$Parent
+    [ModuleSpec[]]$Children = [ModuleSpec[]]@()
 
     # Constructors
-    ModuleTreeNode ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
-    ModuleTreeNode ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
-    ModuleTreeNode ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (  #have to chain base ctor because properties are read-only
-        $(
-            $Hashtable = @{
-                ModuleName        = $ModuleSpec.Name
-                Guid              = $ModuleSpec.Guid
-                ModuleVersion     = $ModuleSpec.Version
-                RequiredVersion   = $ModuleSpec.RequiredVersion
-            }
-            if ($ModuleSpec.MaximumVersion) {$Hashtable.MaximumVersion = $ModuleSpec.MaximumVersion}
-
-            $Hashtable
-        )
-    ) {}
-
+    ModuleSpec ([string]$Name) : base ($Name) {}
+    ModuleSpec ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
+    ModuleSpec ([ModuleSpecification]$ModuleSpec) : base ($ModuleSpec) {}
+    ModuleSpec ([PSModuleInfo]$Module) : base ($Module) {}
 
     # List of all dependencies; reverse this to get a viable module import order
-    [System.Collections.Generic.List[ModuleTreeNode]] ToList()
+    [List[ModuleSpec]] ToList()
     {
-        $List = [System.Collections.Generic.List[ModuleTreeNode]]::new()
+        $List = [List[ModuleSpec]]::new()
         $List.Add($this)
 
         foreach ($Child in $this.Children)
@@ -55,17 +45,17 @@ class ModuleTreeNode : ComparableModuleSpecification
     }
 
     # List with duplicates removed
-    [System.Collections.Generic.List[ModuleTreeNode]] GetDistinctList()
+    [List[ModuleSpec]] GetDistinctList()
     {
-        return [System.Collections.Generic.List[ModuleTreeNode]]($this.ToList() | Select-Object -Unique)
+        return [List[ModuleSpec]]($this.ToList() | Select-Object -Unique)
     }
 
     # List with duplicates removed and in reverse order
-    [System.Collections.Generic.List[ModuleTreeNode]] GetModuleImportOrder()
+    [List[ModuleSpec]] GetModuleImportOrder()
     {
         $List = $this.ToList()
         $List.Reverse()
-        return [System.Collections.Generic.List[ModuleTreeNode]]($List | Select-Object -Unique)
+        return [List[ModuleSpec]]($List | Select-Object -Unique)
     }
 
     # Visual output with dependencies indented

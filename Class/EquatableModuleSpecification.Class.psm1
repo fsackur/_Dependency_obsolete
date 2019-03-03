@@ -1,4 +1,6 @@
-﻿class EquatableModuleSpecification : Microsoft.PowerShell.Commands.ModuleSpecification, IEquatable[Microsoft.PowerShell.Commands.ModuleSpecification]
+﻿using namespace Microsoft.PowerShell.Commands
+
+class EquatableModuleSpecification : ModuleSpecification, IEquatable[ModuleSpecification]
 {
     <#
         .SYNOPSIS
@@ -27,27 +29,55 @@
     #>
 
     # Constructors
-    EquatableModuleSpecification ([string]$Name) : base (@{ModuleName = $Name; ModuleVersion = '0.0.0.0'}) {}
+    EquatableModuleSpecification ([string]$Name) : base ($Name) {}
     EquatableModuleSpecification ([hashtable]$Hashtable) : base ([hashtable]$Hashtable) {}
-    EquatableModuleSpecification ([Microsoft.PowerShell.Commands.ModuleSpecification]$ModuleSpec) : base (  # have to chain base ctor because properties are read-only
-        $(
-            $Hashtable = @{
-                ModuleName        = $ModuleSpec.Name
-                Guid              = $ModuleSpec.Guid
-                ModuleVersion     = $ModuleSpec.Version
-                RequiredVersion   = $ModuleSpec.RequiredVersion
-            }
-            if ($ModuleSpec.MaximumVersion) {$Hashtable.MaximumVersion = $ModuleSpec.MaximumVersion}
+    EquatableModuleSpecification ([ModuleSpecification]$ModuleSpec) : base ($(
+        $Hashtable = @{
+            ModuleName        = $ModuleSpec.Name
+            Guid              = $ModuleSpec.Guid
+            ModuleVersion     = $ModuleSpec.Version
+            RequiredVersion   = $ModuleSpec.RequiredVersion
+        }
+        # Base .ctor won't accept null in this field
+        if ($ModuleSpec.MaximumVersion)
+        {
+            $Hashtable.MaximumVersion = $ModuleSpec.MaximumVersion
+        }
 
-            $Hashtable
-        )
-    ) {}
+        $Hashtable
+    )) {}
+
+    EquatableModuleSpecification ([PSModuleInfo]$Module) : base ($(
+        $Hashtable = @{
+            ModuleName    = $Module.Name
+            ModuleVersion = $Module.Version
+        }
+        if ($Module.Guid -and $Module.Guid -ne [Guid]'00000000-0000-0000-0000-000000000000')
+        {
+            $Hashtable.Guid = $Module.Guid
+        }
+
+        $Hashtable
+    )) {}
 
     # A module specification has either a Version or a RequiredVersion, but not both. This gets whichever it has.
     [version] GetVersion()
     {
         if ($this.RequiredVersion) {return [version]$this.RequiredVersion} else {return [version]$this.Version}
     }
+
+    # Given a module represented by a module spec, does it meet the requirements of another given module spec?
+    [bool] MeetsSpec([ModuleSpecification]$RefSpec)
+    {
+        return (
+            $this.Name -eq $RefSpec.Name -and
+            (-not $RefSpec.Guid -or $this.Guid -eq $RefSpec.Guid) -and
+            (-not $RefSpec.Version -or $this.GetVersion() -ge $RefSpec.Version) -and
+            (-not $RefSpec.MaximumVersion -or $this.GetVersion() -le $RefSpec.MaximumVersion) -and
+            (-not $RefSpec.RequiredVersion -or $this.GetVersion() -eq $RefSpec.RequiredVersion)
+        )
+    }
+
 
     # Override method from Object
     [string] ToString() {
@@ -60,7 +90,7 @@
     # Override method from Object by testing for null and calling implementation of IEquatable
     [bool] Equals([System.Object]$Obj)
     {
-        $ComparisonObj = $Obj -as [Microsoft.PowerShell.Commands.ModuleSpecification]
+        $ComparisonObj = $Obj -as [ModuleSpecification]
         if ($null -eq $ComparisonObj)
         {
             return $false
@@ -72,9 +102,15 @@
     }
 
     # Implement IEquatable
-    [bool] Equals([Microsoft.PowerShell.Commands.ModuleSpecification]$ComparisonObj)
+    [bool] Equals([ModuleSpecification]$RefSpec)
     {
-        $C = [EquatableModuleSpecification]$ComparisonObj   # Base type does not have useful ToString()
-        return $this.ToString() -ilike $ComparisonObj.ToString()
+        return (
+            $this.Name -ieq $RefSpec.Name -and
+            (-not $RefSpec.Guid -or $this.Guid -eq $RefSpec.Guid) -and
+            (-not $RefSpec.Version -or $this.GetVersion() -eq $RefSpec.Version) -and
+            (-not $RefSpec.MaximumVersion -or $this.GetVersion() -eq $RefSpec.MaximumVersion) -and
+            (-not $RefSpec.RequiredVersion -or $this.GetVersion() -eq $RefSpec.RequiredVersion)
+        )
     }
+
 }
